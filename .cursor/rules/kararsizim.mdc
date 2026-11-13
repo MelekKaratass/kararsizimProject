@@ -1,0 +1,29 @@
+---
+description: kararsızım prototip kuralları — plan, aşama sınırı ve teknoloji
+alwaysApply: true
+---
+
+# kararsızım
+
+Kod yazmadan önce `docs/KARARSIZIM_PROJE_PLANI.md` dosyasını oku. Yalnızca istenen aşamayı uygula; bitince dur, sonraki aşamaya geçme. Bölüm 3.6 kapsam dışıdır.
+
+## Yığın
+
+- Python 3.14 ve Django 5.2 LTS. Arayüz: Django template, CSS, vanilla JS.
+- Veritabanı Supabase Postgres (`DATABASE_URL`). SQLite kullanma.
+- Kimlik doğrulama Django session. DRF, React, Tailwind, Celery, Redis ve Supabase Auth/JS ekleme.
+- `manage.py` depo kökünde durur. Gizli değerler yalnızca `.env` içindedir.
+
+## Kilitli ürün kararları
+
+- Ana sayfa kartında soru, kullanıcı adı ve tarih görünür. Oy sayısı ve sonuç görünmez.
+- Üye oyu hem `user` hem `session_key` yazar. Aynı tarayıcıda çıkış yapıp tekrar oy verilemez. Giriş öncesi ziyaretçi oyu kullanıcıya bağlanmaz; o oturumda ikinci oy da reddedilir.
+
+## Dil
+
+Kullanıcıya görünen metinler ve kod yorumları Türkçe olsun. Değişken adları İngilizce kalabilir. Model, migrasyon, view ve CSRF gibi kavramları kısa ve sade açıkla.
+
+```text
+# Yanlış: Aşama 0 istenirken anket modeli ve oy endpoint'i eklemek
+# Doğru: Aşama 0'da iskelet, User modeli, base.html; sonra dur
+```
