@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Anket oluştur · kararsızım{% endblock %}
+{% block content %}<div class="narrow-page form-page">
+  <a class="back-link" href="{% url 'polls:home' %}">← Ana sayfaya dön</a>
+  <section class="form-card"><span class="eyebrow">Aklındaki soruyu sor</span><h1>Hadi, kararsızlığını<br><span>paylaşalım.</span></h1>
+    <form method="post" id="poll-create-form" novalidate>{% csrf_token %}
+      {% if form.non_field_errors %}<div class="form-errors">{{ form.non_field_errors }}</div>{% endif %}
+      <div class="field"><label for="{{ form.question.id_for_label }}">{{ form.question.label }}</label>{{ form.question }}{% if form.question.errors %}<div class="field-error">{{ form.question.errors }}</div>{% endif %}<small>5–200 karakter</small></div>
+      <div class="field"><div class="option-heading"><label>Seçeneklerin</label><span>2–5 seçenek</span></div><div id="option-list">
+        {% for field in form %}{% if field.name|slice:":7" == "option_" %}<div class="option-input-row" data-option-row><span class="option-number">{{ forloop.counter|add:"-2" }}</span>{{ field }}<button class="remove-option" type="button" aria-label="Seçeneği kaldır">−</button>{% if field.errors %}<div class="field-error">{{ field.errors }}</div>{% endif %}</div>{% endif %}{% endfor %}
+      </div><button class="add-option" type="button" id="add-option">＋ Seçenek ekle</button></div>
+      <button class="button button-primary button-wide" type="submit">Anketi yayımla <span>→</span></button>
+    </form>
+  </section>
+</div>{% endblock %}
+{% block scripts %}<script src="{% static 'js/create_poll.js' %}" defer></script>{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ poll.question }} · kararsızım{% endblock %}
+{% block content %}
+<div class="narrow-page detail-page">
+  <a class="back-link" href="{% url 'polls:home' %}">← Anketlere dön</a>
+  <article class="detail-card">
+    <div class="detail-topline"><span class="eyebrow">Bir kararsızlık geldi</span><span class="detail-emoji">🤔</span></div>
+    <h1>{{ poll.question }}</h1>
+    <div class="poll-card-meta detail-meta"><span class="avatar">{{ poll.author.username|first|upper }}</span><span>{{ poll.author.username }}</span><span class="meta-dot">·</span><time>{{ poll.created_at|date:"j F Y" }}</time></div>
+    {% if show_results %}
+      <div class="results-list" aria-label="Anket sonuçları">
+        {% for result in option_results %}<div class="result-row"><div class="result-label"><span>{{ result.option.text }}</span><strong>{{ result.percent }}%</strong></div><div class="result-track"><span class="result-fill color-{{ forloop.counter }}" style="width: {{ result.percent }}%"></span></div><small>{{ result.votes }} oy{% if prior_vote.option_id == result.option.id %} · Senin oyun{% endif %}</small></div>{% endfor %}
+      </div>
+      <div class="total-votes"><span>Toplam katılım</span><strong>{{ total_votes }} oy</strong></div>
+    {% endif %}
+    {% if not prior_vote %}
+      <form class="vote-form" data-vote-url="{% url 'polls:vote' poll.id %}" data-detail-url="{% url 'polls:detail' poll.id %}">
+        {% csrf_token %}<fieldset><legend>Sen olsan hangisini seçerdin?</legend>
+          {% for option in poll.options.all %}<label class="vote-option"><input type="radio" name="option_id" value="{{ option.id }}" required><span class="vote-choice"><span class="choice-dot color-{{ forloop.counter }}"></span>{{ option.text }}<span class="choice-check">✓</span></span></label>{% endfor %}
+        </fieldset>
+        <p class="form-error" data-vote-error role="alert"></p><button class="button button-primary button-wide" type="submit">Bu seçeneğe oy ver <span>→</span></button>
+        {% if user == poll.author %}<p class="owner-note">Sen de anketine oy verebilirsin ✨</p>{% elif user.is_authenticated %}<p class="privacy-note">Sonuçları görmek için oyunu kullan ✨</p>{% else %}<p class="privacy-note">Üye olmadan oy verebilirsin. Bu tarayıcıdan ankete bir kez oy kullanabilirsin.</p>{% endif %}
+      </form>
+    {% endif %}
+  </article>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/vote.js' %}" defer></script>{% endblock %}

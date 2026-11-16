@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Sayfa bulunamadı · kararsızım{% endblock %}
+{% block content %}
+<div class="narrow-page not-found-page">
+  <section class="form-card not-found-card">
+    <div class="not-found-art" aria-hidden="true"><span>404</span><span class="not-found-face">🤔</span></div>
+    <span class="eyebrow">Ufak bir yol karışıklığı oldu</span>
+    <h1>Bu sayfayı bulamadık.</h1>
+    <p>Adres değişmiş ya da aradığın anket kaldırılmış olabilir. İstersen ana sayfadan yeniden başlayalım.</p>
+    <div class="not-found-actions">
+      <a class="button button-primary" href="{% url 'polls:home' %}">Ana sayfaya dön <span>→</span></a>
+      <a class="not-found-secondary" href="{% url 'polls:home' %}">Anketlere göz at</a>
+    </div>
+  </section>
+</div>
+{% endblock %}

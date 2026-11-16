@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Kayıt tamamlandı · kararsızım{% endblock %}
+{% block content %}
+<div class="narrow-page success-page">
+  <section class="form-card success-card">
+    <span class="success-mark" aria-hidden="true">✓</span>
+    <span class="eyebrow">Aramıza hoş geldin ✨</span>
+    <h1>Kaydınız başarıyla oluşturuldu!</h1>
+    <p>Artık hesabınıza giriş yapıp anket oluşturmaya başlayabilirsiniz.</p>
+    <a class="button button-primary button-wide" href="{% url 'accounts:login' %}">Giriş yap <span>→</span></a>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Anketler · kararsızım{% endblock %}
+{% block content %}
+<section class="hero">
+  <span class="eyebrow">Küçük bir fikir, büyük bir karar ✨</span>
+  <h1>Kararsızlığını<br><span>birlikte çözelim.</span></h1>
+  <p>Aklında iki seçenek mi var? Sor, herkes fikrini söylesin.</p>
+  <a class="button button-primary" href="{% url 'polls:create' %}">＋ Hemen anket oluştur</a>
+  <span class="hero-doodle doodle-one">✳</span><span class="hero-doodle doodle-two">☺</span>
+</section>
+{% if popular_polls %}<section class="popular-section">
+  <div class="section-heading"><div><span class="eyebrow">Toplulukta öne çıkanlar</span><h2>En çok katılım alanlar</h2></div><span class="live-label">🔥 Popüler</span></div>
+  <div class="popular-grid">
+    {% for poll in popular_polls %}<a class="poll-card popular-card" href="{% url 'polls:detail' poll.id %}">
+      <div class="popular-card-top"><span class="popular-rank">#{{ forloop.counter }}</span><span aria-hidden="true">✨</span></div>
+      <h3>{{ poll.question }}</h3>
+      <div class="poll-card-meta"><span class="avatar">{{ poll.author.username|first|upper }}</span><span>{{ poll.author.username }}</span><span class="meta-dot">·</span><time>{{ poll.created_at|date:"j M Y" }}</time></div>
+    </a>{% endfor %}
+  </div>
+</section>{% endif %}
+<section class="feed-section">
+  <div class="section-heading"><div><span class="eyebrow">Topluluk ne düşünüyor?</span><h2>Son anketler</h2></div><span class="live-label"><i></i> Yeni fikirler</span></div>
+  {% if page.object_list %}<div class="poll-grid">
+    {% for poll in page.object_list %}
+    <a class="poll-card" href="{% url 'polls:detail' poll.id %}">
+      <span class="card-sparkle">✳</span><h3>{{ poll.question }}</h3>
+      <div class="poll-card-meta"><span class="avatar">{{ poll.author.username|first|upper }}</span><span>{{ poll.author.username }}</span><span class="meta-dot">·</span><time>{{ poll.created_at|date:"j M Y" }}</time></div>
+      <span class="card-arrow" aria-hidden="true">↗</span>
+    </a>
+    {% endfor %}
+  </div>
+  <nav class="pagination" aria-label="Sayfalar">
+    {% if page.has_previous %}<a href="?sayfa={{ page.previous_page_number }}">← Önceki</a>{% endif %}
+    <span>{{ page.number }} / {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}<a href="?sayfa={{ page.next_page_number }}">Sonraki →</a>{% endif %}
+  </nav>
+  {% else %}<div class="empty-state"><span>🌱</span><h3>Henüz anket yok</h3><p>İlk kararsızlığı sen paylaş, sohbet başlasın!</p><a class="button button-primary" href="{% url 'polls:create' %}">İlk anketi oluştur</a></div>{% endif %}
+</section>
+{% endblock %}

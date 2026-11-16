@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}Kayıt ol · kararsızım{% endblock %}
+{% block content %}<div class="narrow-page form-page"><section class="form-card auth-card"><span class="eyebrow">Aramıza katıl ✨</span><h1>Kararsızlıklar<br><span>paylaşınca güzel.</span></h1><form method="post">{% csrf_token %}
+{% for field in form %}<div class="field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="field-error">{{ field.errors }}</div>{% endif %}</div>{% endfor %}
+<button class="button button-primary button-wide" type="submit">Hesap oluştur <span>→</span></button></form><p class="auth-switch">Zaten hesabın var mı? <a href="{% url 'accounts:login' %}">Giriş yap</a></p></section></div>{% endblock %}
