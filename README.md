@@ -54,7 +54,17 @@ Kararsız kaldığın konuları ankete dönüştür, topluluğun oylarıyla kara
    pip install -r requirements.txt
    ```
 
-3. `.env.example` dosyasını `.env` olarak kopyala. `SECRET_KEY` ve `DATABASE_URL` değerlerini kendi ortamına göre doldur. Veritabanı için Supabase PostgreSQL Transaction pooler bağlantısını kullan. Gerçek sırları GitHub'a yükleme.
+3. Proje klasöründe `.env` adlı dosya oluşturup kendi `SECRET_KEY` ve Supabase PostgreSQL Transaction pooler `DATABASE_URL` değerlerini ekle. Örnek biçim:
+
+   ```env
+   SECRET_KEY=guclu-ve-kendine-ozel-bir-anahtar
+   DEBUG=True
+   DATABASE_URL=postgresql://postgres.PROJE_KODU:SIFRE@POOLER_ADRESI:6543/postgres?sslmode=require
+   ALLOWED_HOSTS=127.0.0.1,localhost
+   CSRF_TRUSTED_ORIGINS=
+   ```
+
+   `.env` dosyasını GitHub'a yükleme.
 
 4. Tabloları oluşturup sunucuyu başlat:
 
