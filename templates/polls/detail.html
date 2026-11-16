@@ -5,7 +5,7 @@
 <div class="narrow-page detail-page">
   <a class="back-link" href="{% url 'polls:home' %}">← Anketlere dön</a>
   <article class="detail-card">
-    <div class="detail-topline"><span class="eyebrow">Bir kararsızlık geldi</span><span class="detail-emoji">🤔</span></div>
+    <div class="detail-topline"><span class="category-badge">{{ poll.get_category_display }}</span><span class="detail-emoji">🤔</span></div>
     <h1>{{ poll.question }}</h1>
     <div class="poll-card-meta detail-meta"><span class="avatar">{{ poll.author.username|first|upper }}</span><span>{{ poll.author.username }}</span><span class="meta-dot">·</span><time>{{ poll.created_at|date:"j F Y" }}</time></div>
     {% if show_results %}

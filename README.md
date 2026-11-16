@@ -22,6 +22,8 @@ Kararsız kaldığın konuları ankete dönüştür, topluluğun oylarıyla kara
 
 - E-posta veya kullanıcı adıyla kayıt ve giriş
 - Üye olmadan anketleri görüntüleme ve oy kullanma
+- Anket sorusu ve seçenek metinlerinde kelime arama
+- Anketleri kategoriye göre filtreleme
 - Üyeler için 2–5 seçenekli anket oluşturma
 - Oy kullandıktan sonra sonuçları ve katılım oranlarını görme
 - En çok katılım alan anketleri ana sayfada listeleme

@@ -1,9 +1,12 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
+from .models import Poll
+
 
 class PollCreateForm(forms.Form):
     question = forms.CharField(label="Kararsız kaldığın konu", min_length=5, max_length=200, widget=forms.Textarea(attrs={"rows": 3, "placeholder": "Örn. Bu akşam ne yapsam?"}))
+    category = forms.ChoiceField(label="Kategori", choices=Poll.CATEGORY_CHOICES, initial="diger")
     options = forms.CharField(widget=forms.HiddenInput, required=False)
 
     def __init__(self, *args, **kwargs):

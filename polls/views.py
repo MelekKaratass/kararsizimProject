@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import IntegrityError, transaction
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
@@ -30,14 +30,35 @@ def set_vote_cookie(response, request, browser_id):
 
 def home(request):
     polls = Poll.objects.select_related("author").all()
+    search_query = request.GET.get("q", "").strip()[:100]
+    category_query = request.GET.get("kategori", "").strip()
+    category_labels = dict(Poll.CATEGORY_CHOICES)
+    if category_query not in category_labels:
+        category_query = ""
+    if category_query:
+        polls = polls.filter(category=category_query)
+    if search_query:
+        polls = polls.filter(
+            Q(question__icontains=search_query)
+            | Q(options__text__icontains=search_query)
+        ).distinct()
     page = Paginator(polls, 10).get_page(request.GET.get("sayfa"))
-    popular_polls = (
-        Poll.objects.select_related("author")
-        .annotate(participant_count=Count("votes"))
-        .filter(participant_count__gt=0)
-        .order_by("-participant_count", "-created_at")[:3]
-    )
-    return render(request, "polls/home.html", {"page": page, "popular_polls": popular_polls})
+    popular_polls = []
+    if not search_query:
+        popular_polls = (
+            polls.select_related("author")
+            .annotate(participant_count=Count("votes"))
+            .filter(participant_count__gt=0)
+            .order_by("-participant_count", "-created_at")[:3]
+        )
+    return render(request, "polls/home.html", {
+        "page": page,
+        "popular_polls": popular_polls,
+        "search_query": search_query,
+        "category_choices": Poll.CATEGORY_CHOICES,
+        "selected_category": category_query,
+        "selected_category_label": category_labels.get(category_query, ""),
+    })
 
 
 def poll_detail(request, poll_id):
@@ -104,7 +125,11 @@ def create_poll(request):
     form = PollCreateForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         with transaction.atomic():
-            poll = Poll.objects.create(author=request.user, question=form.cleaned_data["question"].strip())
+            poll = Poll.objects.create(
+                author=request.user,
+                question=form.cleaned_data["question"].strip(),
+                category=form.cleaned_data["category"],
+            )
             Option.objects.bulk_create([
                 Option(poll=poll, text=text, position=index)
                 for index, text in enumerate(form.cleaned_data["option_values"])

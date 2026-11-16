@@ -41,6 +41,8 @@
 
 ### 3.1 Ziyaretçi (üye olmayan)
 - Ana sayfada tüm anketleri görür (en yeni en üstte, sayfalama ile).
+- Ana sayfadaki arama alanında anket sorusu ve seçenek metinlerinde kelime arar (büyük/küçük harf duyarsız).
+- Anketleri kategoriye göre filtreleyebilir.
 - Anket detayını açar, oy verir.
 - Oy verdikten sonra sonuçları görür.
 - Anket oluşturmaya çalışırsa kayıt/giriş sayfasına yönlendirilir.
@@ -54,6 +56,7 @@
 
 ### 3.3 Anket kuralları
 - Soru: zorunlu, 5–200 karakter.
+- Kategori: zorunlu; Günlük Hayat, Yemek, Eğlence, Alışveriş, Eğitim / İş, Seyahat veya Diğer.
 - Seçenek sayısı: **en az 2, en fazla 5**.
 - Her seçenek: zorunlu, 1–80 karakter, aynı ankette tekrar edemez (büyük/küçük harf farkı yok sayılır).
 - Anket oluşturma formunda "Seçenek ekle" butonu (5'e ulaşınca devre dışı) ve "Kaldır" butonu (2'nin altına inemez) olacak. Bu JavaScript ile yapılacak, ama sunucu tarafında da aynı kurallar mutlaka doğrulanacak.
@@ -76,7 +79,7 @@
 - E-posta doğrulama ve parola sıfırlama prototipte YOK (sonraki aşamalarda eklenebilir).
 
 ### 3.6 Kapsam dışı (şimdilik YAPILMAYACAK)
-Takip sistemi, yorumlar, beğeni, kategori/etiket, arama, raporlama/moderasyon, bildirimler, profil sayfası düzenleme, oy değiştirme, anket düzenleme, süreli anketler, e-posta doğrulama, parola sıfırlama, çoklu dil, admin dışında yönetim paneli.
+Takip sistemi, yorumlar, beğeni, raporlama/moderasyon, bildirimler, profil sayfası düzenleme, oy değiştirme, anket düzenleme, süreli anketler, e-posta doğrulama, parola sıfırlama, çoklu dil, admin dışında yönetim paneli.
 
 ---
 
@@ -93,6 +96,7 @@ Django modelleri (Supabase Postgres üzerinde):
 **Poll**
 - `author` → User (FK, CASCADE)
 - `question` (CharField, max 200)
+- `category` (seçili anket kategorisi)
 - `created_at` (auto)
 
 **Option**
@@ -240,13 +244,13 @@ Her aşama ayrı bir Claude Code oturumunda/isteğinde yapılmalıdır. Bir aşa
 
 ### Aşama 2 — Anket oluşturma
 - `Poll`, `Option` modelleri ve migrasyon.
-- Anket oluşturma formu (2–5 seçenek, dinamik ekle/kaldır JS'i, sunucu doğrulaması).
+- Anket oluşturma formu (kategori seçimi, 2–5 seçenek, dinamik ekle/kaldır JS'i, sunucu doğrulaması).
 - Giriş yoksa `/giris/` yönlendirmesi.
 - Django admin'de Poll/Option/Vote kayıtları görünsün.
 - **Bitiş kriteri:** Üye 2–5 seçenekli anket oluşturabiliyor; 1 veya 6 seçenek reddediliyor.
 
 ### Aşama 3 — Listeleme ve oylama
-- Ana sayfa listesi (sayfalama), anket detay sayfası.
+- Ana sayfa listesi (sayfalama, soru/seçenek araması ve kategori filtresi), anket detay sayfası.
 - `Vote` modeli, benzersizlik kısıtları, oy verme endpoint'i (JSON), `vote.js` ile sayfa yenilemeden sonuç gösterimi.
 - Ziyaretçi (session) ve üye oylaması; çift oy engeli.
 - "Anketlerim" sayfası ve anket silme.
@@ -263,7 +267,7 @@ Her aşama ayrı bir Claude Code oturumunda/isteğinde yapılmalıdır. Bir aşa
 - **Bitiş kriteri:** Vercel adresinde kayıt, anket oluşturma ve oylama çalışıyor.
 
 ### Sonraki fikirler (prototipten sonra)
-E-posta doğrulama, parola sıfırlama, kategoriler, arama, en çok oy alanlar sıralaması, süreli anketler, rate limit, rapor/moderasyon.
+E-posta doğrulama, parola sıfırlama, en çok oy alanlar sıralaması, süreli anketler, rate limit, rapor/moderasyon.
 
 ---
 
