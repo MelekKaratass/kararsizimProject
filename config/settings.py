@@ -1,7 +1,10 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
+from django.core.management.utils import get_random_secret_key
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -18,8 +21,13 @@ def load_env_file():
 
 
 load_env_file()
-SECRET_KEY = os.getenv("SECRET_KEY", "yerel-gelistirme-anahtari-degistir")
-DEBUG = os.getenv("DEBUG", "True").lower() in {"1", "true", "yes"}
+DEBUG = os.getenv("DEBUG", "False").lower() in {"1", "true", "yes"}
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    if DEBUG:
+        SECRET_KEY = get_random_secret_key()
+    else:
+        raise ImproperlyConfigured("DEBUG kapalıyken SECRET_KEY ortam değişkeni zorunludur.")
 ALLOWED_HOSTS = [host.strip() for host in os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",") if host.strip()]
 CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if origin.strip()]
 
@@ -45,6 +53,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "axes",
     "accounts",
     "polls",
 ]
@@ -57,6 +66,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 ROOT_URLCONF = "config.urls"
 TEMPLATES = [{
@@ -84,7 +94,17 @@ DATABASES["default"].setdefault("OPTIONS", {})["prepare_threshold"] = None
 DISABLE_SERVER_SIDE_CURSORS = True
 
 AUTH_USER_MODEL = "accounts.User"
-AUTHENTICATION_BACKENDS = ["accounts.backends.EmailBackend"]
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",
+    "accounts.backends.EmailBackend",
+]
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = timedelta(minutes=15)
+AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
+AXES_USERNAME_FORM_FIELD = "username"
+AXES_USERNAME_CALLABLE = "accounts.security.axes_username"
+AXES_CLIENT_IP_CALLABLE = "accounts.security.axes_client_ip"
+AXES_HTTP_RESPONSE_CODE = 429
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
